@@ -1,0 +1,333 @@
+swagger: "2.0"
+
+info:
+  title: User MS
+  version: "0.1"
+  description: USER MicroService
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+basePath: "/api/user"
+
+securityDefinitions:
+  jwt:
+    type: apiKey
+    name: Authorization
+    in: header
+    x-authentication-scheme: Bearer
+    x-bearerInfoFunc: app.decode_token
+
+paths:
+  /auth:
+    post:
+      tags: [Auth]
+      operationId: app.auth
+      parameters:
+        - $ref: "#/parameters/auth_body"
+      responses:
+        200:
+          description: Return jwt token
+        401:
+          description: Bad auth
+
+  /auth-microservice:
+    post:
+      tags: [Auth]
+      operationId: app.auth_microservice
+      parameters:
+        - $ref: "#/parameters/auth_body_microservice"
+      responses:
+        200:
+          description: Return jwt token
+        401:
+          description: Bad auth
+
+  /registration:
+    post:
+      tags: [User]
+      operationId: app.registration
+      parameters:
+        - $ref: "#/parameters/user_body"
+      responses:
+        200:
+          description: Return status
+        409:
+          description: Already exists
+
+  /role/{user_id}:
+    get:
+      tags: [User]
+      operationId: app.get_role
+      parameters:
+        - $ref: "#/parameters/user_id"
+      responses:
+        200:
+          description: Return user role
+        404:
+          description: User not found
+
+  /details/{user_id}:
+    get:
+      tags: [User]
+      operationId: app.get_user_details
+      parameters:
+        - $ref: "#/parameters/user_id"
+      responses:
+        200:
+          description: Return user details
+        404:
+          description: User not found
+
+  /send-email/{user_id}:
+    post:
+      tags: [Email]
+      operationId: app.send_verification_email
+      parameters:
+        - $ref: "#/parameters/user_id"
+      responses:
+        200:
+          description: Return successfully sent
+        404:
+          description: User not found
+
+  /verify:
+    put:
+      tags: [User]
+      operationId: app.verify_user
+      parameters:
+        - $ref: "#/parameters/verification_body"
+      responses:
+        200:
+          description: Return successfully verified
+        400:
+          description: Codes do not match
+        404:
+          description: User not found
+
+  /change-password:
+    put:
+      tags: [User]
+      operationId: app.change_password
+      parameters:
+        - $ref: "#/parameters/password_body"
+      responses:
+        200:
+          description: Changed password successfully
+        404:
+          description: Password not changed
+
+  /all:
+    get:
+      tags: [User]
+      operationId: app.get_all_users
+      responses:
+        200:
+          description: Returns all users details
+        404:
+          description: Images were not found
+
+  /delete/{user_id}:
+    delete:
+      tags: [User]
+      operationId: app.delete_user
+      parameters:
+        - $ref: "#/parameters/user_id"
+      responses:
+        204:
+          description: User successfully deleted
+        404:
+          description: User not found
+
+parameters:
+  auth_body:
+    name: auth_body
+    description: Body of login and get token request
+    in: body
+    schema:
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+  user_body:
+    name: user_body
+    description: Body of a user add request
+    in: body
+    schema:
+      required:
+        - username
+        - name
+        - surname
+        - email
+        - password
+        - repeated_password
+        - date_of_birth
+        - gender
+      properties:
+        username:
+          type: string
+        name:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        repeated_password:
+          type: string
+        date_of_birth:
+          type: string
+        gender:
+          type: string
+
+  user_id:
+    name: user_id
+    description: User unique id
+    in: path
+    type: integer
+    required: true
+
+  image_id:
+    name: image_id
+    description: Image unique id
+    in: path
+    type: integer
+    required: true
+
+  image_body:
+    name: image_body
+    description: Body of a image add request
+    in: body
+    schema:
+      required:
+        - user_id
+        - image_link
+        - is_profile
+      properties:
+        user_id:
+          type: integer
+        image_link:
+          type: string
+        is_profile:
+          type: boolean
+
+  password_body:
+    name: password_body
+    description: Body of a password update request
+    in: body
+    schema:
+      required:
+        - user_id
+        - new_password
+        - old_password
+      properties:
+        user_id:
+          type: integer
+        new_password:
+          type: string
+        old_password:
+          type: string
+
+  phone_body:
+    name: phone_body
+    description: Body of a phone update request
+    in: body
+    schema:
+      required:
+        - user_id
+        - phone
+      properties:
+        user_id:
+          type: integer
+        phone:
+          type: string
+
+  city_body:
+    name: city_body
+    description: Body of a city update request
+    in: body
+    schema:
+      required:
+        - user_id
+        - city
+      properties:
+        user_id:
+          type: integer
+        city:
+          type: string
+
+  country_body:
+    name: country_body
+    description: Body of a country update request
+    in: body
+    schema:
+      required:
+        - user_id
+        - country
+      properties:
+        user_id:
+          type: integer
+        country:
+          type: string
+
+  address_body:
+    name: address_body
+    description: Body of an address update request
+    in: body
+    schema:
+      required:
+        - user_id
+        - address
+      properties:
+        user_id:
+          type: integer
+        address:
+          type: string
+
+  postal_body:
+    name: postal_body
+    description: Body of a postal_code update request
+    in: body
+    schema:
+      required:
+        - user_id
+        - postal_code
+      properties:
+        user_id:
+          type: integer
+        postal_code:
+          type: integer
+
+  verification_body:
+    name: verification_body
+    description: Body of a verificaiton update request
+    in: body
+    schema:
+      required:
+        - user_id
+        - code
+      properties:
+        user_id:
+          type: integer
+        code:
+          type: string
+
+  auth_body_microservice:
+    name: auth_body_microservice
+    description: Body of login and get token request for microservices
+    in: body
+    schema:
+      required:
+        - apikey
+      properties:
+        apikey:
+          type: string

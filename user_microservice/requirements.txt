@@ -1,0 +1,8 @@
+Flask==1.1.2
+Flask-Migrate
+connexion[swagger-ui]
+sqlalchemy
+flask-bcrypt
+Flask-Mail
+PyJWT
+marshmallow-sqlalchemy
