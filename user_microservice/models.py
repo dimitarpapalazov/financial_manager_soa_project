@@ -15,6 +15,7 @@ class User(db.Model):
     role = db.Column(db.String)
     verification_code = db.Column(db.String)
     is_verified = db.Column(db.Boolean)
+    date_of_birth = db.Column(db.DateTime)
 
 
 class UserSchema(SQLAlchemyAutoSchema):

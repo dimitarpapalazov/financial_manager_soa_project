@@ -14,6 +14,8 @@ import jwt
 import time
 
 
+# Authentication and authorization configuration
+
 JWT_SECRET = 'USER MS SECRET'
 JWT_LIFETIME_SECONDS = 600000
 
@@ -140,7 +142,7 @@ def registration(user_body):
                                 user_body['password']),
                             role='BASIC',
                             is_verified=False,
-                            date_of_birth=user_body['date_of_birth'],
+                            date_of_birth=date_of_birth,
                             gender=user_body['gender'],
                             age=age,
                             verification_code=code)
@@ -211,6 +213,7 @@ def delete_user(user_id):
 
 
 # Configuration
+
 connexion_app = connexion.App(__name__, specification_dir="./")
 app = connexion_app.app
 bcrypt = Bcrypt(app)
@@ -230,6 +233,7 @@ app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
 from models import User, UserSchema
+
 
 user_schema = UserSchema(
     exclude=['is_verified', 'password', 'verification_code'])

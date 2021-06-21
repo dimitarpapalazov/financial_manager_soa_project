@@ -1,9 +1,9 @@
-FROM python:3.8
+FROM python:3.6
 
-WORKDIR /app
+WORKDIR /user_microservice
 
 COPY requirements.txt requirements.txt
 
 RUN pip install -r requirements.txt
 
-CMD ["python", "app.py"]
+CMD ["python", "/user_microservice/app.py"]
