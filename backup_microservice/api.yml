@@ -11,7 +11,7 @@ consumes:
 produces:
   - application/json
 
-basePath: "/api/accounts"
+basePath: "/api/backup"
 
 securityDefinitions:
   jwt:
