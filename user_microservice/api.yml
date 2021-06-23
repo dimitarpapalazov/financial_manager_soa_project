@@ -1,9 +1,9 @@
 swagger: "2.0"
 
 info:
-  title: User MS
+  title: User Micorservice
   version: "0.1"
-  description: USER MicroService
+  description: USER Microservice
 
 consumes:
   - application/json
