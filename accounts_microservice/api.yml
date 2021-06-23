@@ -1,0 +1,183 @@
+swagger: "2.0"
+
+info:
+  title: Accounts Microservice
+  version: "0.1"
+  description: ACCOUNTS Microservice
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+basePath: "/api/accounts"
+
+securityDefinitions:
+  jwt:
+    type: apiKey
+    name: Authorization
+    in: header
+    x-authentication-scheme: Bearer
+    x-bearerInfoFunc: app.decode_token
+
+paths:
+  /create:
+    post:
+      tags: [Accounts]
+      operationId: app.create
+      parameters:
+        - $ref: "#/parameters/account_body"
+      responses:
+        200:
+          description: Return status
+        404:
+          description: Not found
+        409:
+          description: Already exists
+
+  /get/{account_id}:
+    get:
+      tags: [Accounts]
+      operationId: app.get_account
+      parameters:
+        - $ref: "#/parameters/account_id"
+      responses:
+        200:
+          description: Return account details
+        404:
+          description: Account not found
+
+  /get-all-by-user/{user_id}:
+    get:
+      tags: [Accounts]
+      operationId: app.get_all_accounts_by_user_id
+      parameters:
+        - $ref: "#/parameters/user_id"
+      responses:
+        200:
+          description: Return accounts for user
+        404:
+          description: Account not found
+
+  /change-name:
+    put:
+      tags: [Account]
+      operationId: app.change_name
+      parameters:
+        - $ref: "#/parameters/name_body"
+      responses:
+        200:
+          description: Changed name successfully
+        404:
+          description: Account not found
+
+  /change-group:
+    put:
+      tags: [Account]
+      operationId: app.change_group
+      parameters:
+        - $ref: "#/parameters/group_body"
+      responses:
+        200:
+          description: Changed group successfully
+        404:
+          description: Account not found
+
+  /change-amount:
+    put:
+      tags: [Account]
+      operationId: app.change_amount
+      parameters:
+        - $ref: "#/parameters/amount_body"
+      responses:
+        200:
+          description: Changed amount successfully
+        404:
+          description: Account not found
+
+  /delete/{account_id}:
+    delete:
+      tags: [Account]
+      operationId: app.delete_account
+      parameters:
+        - $ref: "#/parameters/account_id"
+      responses:
+        204:
+          description: Account successfully deleted
+        404:
+          description: Account not found
+
+parameters:
+  account_body:
+    name: account_body
+    description: Body of a account create request
+    in: body
+    schema:
+      required:
+        - user_id
+        - name
+        - group
+      properties:
+        user_id:
+          type: integer
+        name:
+          type: string
+        group:
+          type: string
+
+  user_id:
+    name: user_id
+    description: User unique id
+    in: path
+    type: integer
+    required: true
+
+  account_id:
+    name: account_id
+    description: Account unique id
+    in: path
+    type: integer
+    required: true
+
+  name_body:
+    name: name_body
+    description: Body of a account's name update request
+    in: body
+    schema:
+      required:
+        - account_id
+        - name
+      properties:
+        account_id:
+          type: integer
+        name:
+          type: string
+
+  group_body:
+    name: group_body
+    description: Body of a account's group update request
+    in: body
+    schema:
+      required:
+        - account_id
+        - group
+      properties:
+        account_id:
+          type: integer
+        group:
+          type: string
+
+  amount_body:
+    name: amount_body
+    description: Body of a account's amount update request
+    in: body
+    schema:
+      required:
+        - account_id
+        - amount
+      properties:
+        account_id:
+          type: integer
+        amount:
+          type: integer

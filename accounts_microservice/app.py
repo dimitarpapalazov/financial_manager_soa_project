@@ -94,7 +94,7 @@ def change_group(group_body):
 def change_amount(amount_body):
   found_account = db.session.query(Account).get(amount_body['account_id'])
   if found_account:
-    found_account.group += amount_body['amount']
+    found_account.amount += amount_body['amount']
     db.session.commit()
     return account_schema.dump(found_account)
   else:
