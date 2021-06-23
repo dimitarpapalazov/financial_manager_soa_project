@@ -18,6 +18,9 @@ class Transaction(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User')
 
+    def to_csv():
+        return '{},{},{},{},{},{},{}'.format(self.id, self.date, self.category_id, self.account_id, self.amount, self.description, self.user_id)
+
 
 class TransactionSchema(SQLAlchemyAutoSchema):
     class Meta:

@@ -12,6 +12,9 @@ class Account(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User')
 
+    def to_csv():
+        return '{},{},{},{},{}'.format(self.id, self.group, self.name, self.amount, self.user_id)
+
 
 class AccountSchema(SQLAlchemyAutoSchema):
     class Meta:

@@ -17,6 +17,9 @@ class Category(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User')
 
+    def to_csv():
+        return '{},{},{},{}'.format(self.id, self.name, self.type, self.user_id)
+
 
 class Currency(db.Model):
     __tablename__ = 'currency'
