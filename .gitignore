@@ -1,4 +1,8 @@
 /user_microservice/env
 /user_microservice/__pycache__
+/accounts_microservice/env
+/accounts_microservice/__pycache__
+/settings_microservice/env
+/settings_microservice/__pycache__
 /.vscode/
 TODO
