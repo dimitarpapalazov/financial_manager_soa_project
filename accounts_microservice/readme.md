@@ -1,4 +1,4 @@
-cd ./transactions_microservice/
+cd ./accounts_microservice/
 python -m virtualenv env
 env/Scripts/activate
 pip install -r requirements.txt 
@@ -11,6 +11,6 @@ flask db upgrade
 
 ## Docker build & run
 - Build
-  - docker build -t transactions_microservice .
+  - docker build -t accounts_microservice .
 - Run
-  - docker run -p 5000:5000 transactions_microservice
+  - docker run -p 5000:5000 accounts_microservice

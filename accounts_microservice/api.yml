@@ -1,7 +1,7 @@
 swagger: "2.0"
 
 info:
-  title: Accounts Microservice
+  title: Account Microservice
   version: "0.1"
   description: ACCOUNTS Microservice
 
@@ -24,7 +24,7 @@ securityDefinitions:
 paths:
   /create:
     post:
-      tags: [Accounts]
+      tags: [Account]
       operationId: app.create
       parameters:
         - $ref: "#/parameters/account_body"
@@ -38,7 +38,7 @@ paths:
 
   /get/{account_id}:
     get:
-      tags: [Accounts]
+      tags: [Account]
       operationId: app.get_account
       parameters:
         - $ref: "#/parameters/account_id"
@@ -50,7 +50,7 @@ paths:
 
   /get-all-by-user/{user_id}:
     get:
-      tags: [Accounts]
+      tags: [Account]
       operationId: app.get_all_accounts_by_user_id
       parameters:
         - $ref: "#/parameters/user_id"
