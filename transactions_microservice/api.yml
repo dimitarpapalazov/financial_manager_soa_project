@@ -1,0 +1,301 @@
+swagger: "2.0"
+
+info:
+  title: Transaction Microservice
+  version: "0.1"
+  description: ACCOUNTS Microservice
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+basePath: "/api/accounts"
+
+securityDefinitions:
+  jwt:
+    type: apiKey
+    name: Authorization
+    in: header
+    x-authentication-scheme: Bearer
+    x-bearerInfoFunc: app.decode_token
+
+paths:
+  /create:
+    post:
+      tags: [Transaction]
+      operationId: app.create
+      parameters:
+        - $ref: "#/parameters/transaction_body"
+      responses:
+        200:
+          description: Return status
+        404:
+          description: Not found
+        409:
+          description: Already exists
+
+  /get/{tranasction_id}:
+    get:
+      tags: [Transaction]
+      operationId: app.get
+      parameters:
+        - $ref: "#/parameters/tranasction_id"
+      responses:
+        200:
+          description: Return tranasction details
+        404:
+          description: Transaction not found
+
+  /get-daily:
+    get:
+      tags: [Transaction]
+      operationId: app.get_daily
+      parameters:
+        - $ref: "#/parameters/get_body"
+      responses:
+        200:
+          description: Return transactions for user in a day
+        404:
+          description: Transaction not found
+
+  /get-weekly:
+    get:
+      tags: [Transaction]
+      operationId: app.get_weekly
+      parameters:
+        - $ref: "#/parameters/get_body"
+      responses:
+        200:
+          description: Return transactions for user in a week
+        404:
+          description: Transaction not found
+
+  /get-monthly:
+    get:
+      tags: [Transaction]
+      operationId: app.get_monthly
+      parameters:
+        - $ref: "#/parameters/get_body"
+      responses:
+        200:
+          description: Return transactions for user in a month
+        404:
+          description: Transaction not found
+
+  /get-annually:
+    get:
+      tags: [Transaction]
+      operationId: app.get_annually
+      parameters:
+        - $ref: "#/parameters/get_body"
+      responses:
+        200:
+          description: Return transactions for user in a year
+        404:
+          description: Transaction not found
+
+  /get-period:
+    get:
+      tags: [Transaction]
+      operationId: app.get_period
+      parameters:
+        - $ref: "#/parameters/period_body"
+      responses:
+        200:
+          description: Return transactions for user in a period
+        404:
+          description: Transaction not found
+
+  /update-date:
+    put:
+      tags: [Transaction]
+      operationId: app.update_date
+      parameters:
+        - $ref: "#/parameters/date_body"
+      responses:
+        200:
+          description: Changed date successfully
+        404:
+          description: Transaction not found
+
+  /update-account:
+    put:
+      tags: [Transaction]
+      operationId: app.update_account
+      parameters:
+        - $ref: "#/parameters/account_body"
+      responses:
+        200:
+          description: Changed account successfully
+        404:
+          description: Transaction not found
+
+  /update-amount:
+    put:
+      tags: [Transaction]
+      operationId: app.update_amount
+      parameters:
+        - $ref: "#/parameters/amount_body"
+      responses:
+        200:
+          description: Changed amount successfully
+        404:
+          description: Transaction not found
+
+    /update-description:
+      put:
+        tags: [Transaction]
+        operationId: app.update_description
+        parameters:
+          - $ref: "#/parameters/description_body"
+        responses:
+          200:
+            description: Changed description successfully
+          404:
+            description: Transaction not found
+
+  /delete/{tranasction_id}:
+    delete:
+      tags: [Transaction]
+      operationId: app.delete_transaction
+      parameters:
+        - $ref: "#/parameters/tranasction_id"
+      responses:
+        204:
+          description: Transaction successfully deleted
+        404:
+          description: Transaction not found
+
+parameters:
+  transaction_body:
+    name: transaction_body
+    description: Body of a transaction create request
+    in: body
+    schema:
+      required:
+        - date
+        - category_id
+        - account_id
+        - amount
+        - user_id
+      properties:
+        user_id:
+          type: integer
+        category_id:
+          type: integer
+        account_id:
+          type: integer
+        amount:
+          type: number
+        date:
+          type: string
+        description:
+          type: string
+
+  tranasction_id:
+    name: tranasction_id
+    description: Transaction unique id
+    in: path
+    type: integer
+    required: true
+
+  get_body:
+    name: get_body
+    description: Body of get request
+    in: body
+    schema:
+      required:
+        - user_id
+        - date
+      properties:
+        user_id:
+          type: integer
+        date:
+          type: string
+        type:
+          type: integer
+          default: -1
+        to_JSON:
+          type: boolean
+          default: true
+
+  period_body:
+    name: period_body
+    description: Body of period get request
+    in: body
+    schema:
+      required:
+        - user_id
+        - start
+        - end
+      properties:
+        user_id:
+          type: integer
+        start:
+          type: string
+        end:
+          type: string
+        type:
+          type: integer
+          default: -1
+        to_JSON:
+          type: boolean
+          default: true
+
+  date_body:
+    name: date_body
+    description: Body of a transaction's date update request
+    in: body
+    schema:
+      required:
+        - tranasction_id
+        - date
+      properties:
+        tranasction_id:
+          type: integer
+        date:
+          type: string
+
+  account_body:
+    name: account_body
+    description: Body of a transaction's account update request
+    in: body
+    schema:
+      required:
+        - tranasction_id
+        - account_id
+      properties:
+        tranasction_id:
+          type: integer
+        account_id:
+          type: integer
+
+  amount_body:
+    name: amount_body
+    description: Body of a transaction's amount update request
+    in: body
+    schema:
+      required:
+        - tranasction_id
+        - amount
+      properties:
+        tranasction_id:
+          type: integer
+        amount:
+          type: number
+
+  description_body:
+    name: description_body
+    description: Body of a transaction's description update request
+    in: body
+    schema:
+      required:
+        - tranasction_id
+        - description
+      properties:
+        tranasction_id:
+          type: integer
+        description:
+          type: string
