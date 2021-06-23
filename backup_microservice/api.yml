@@ -1,0 +1,79 @@
+swagger: "2.0"
+
+info:
+  title: Backup Microservice
+  version: "0.1"
+  description: BACKUP Microservice
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+basePath: "/api/accounts"
+
+securityDefinitions:
+  jwt:
+    type: apiKey
+    name: Authorization
+    in: header
+    x-authentication-scheme: Bearer
+    x-bearerInfoFunc: app.decode_token
+
+paths:
+  /categories:
+    get:
+      tags: [Backup]
+      operationId: app.categories_to_csv
+      parameters:
+        - $ref: "#/parameters/user_id"
+      responses:
+        200:
+          description: Return categories data for user
+        404:
+          description: Not found
+
+  /accounts:
+    get:
+      tags: [Backup]
+      operationId: app.accounts_to_csv
+      parameters:
+        - $ref: "#/parameters/user_id"
+      responses:
+        200:
+          description: Return accounts data for user
+        404:
+          description: Not found
+
+  /transactions:
+    get:
+      tags: [Backup]
+      operationId: app.transactions_to_csv
+      parameters:
+        - $ref: "#/parameters/user_id"
+      responses:
+        200:
+          description: Return transactions data for user
+        404:
+          description: Not found
+
+  /backup:
+    get:
+      tags: [Backup]
+      operationId: app.all_to_csv
+      parameters:
+        - $ref: "#/parameters/user_id"
+      responses:
+        200:
+          description: Return CSV file location for user
+        404:
+          description: Not found
+
+parameters:
+  user_id:
+    name: user_id
+    description: User unique id
+    in: path
+    type: integer
+    required: true
