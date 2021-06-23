@@ -1,0 +1,227 @@
+swagger: "2.0"
+
+info:
+  title: Settings Microservice
+  version: "0.1"
+  description: SETTINGS Microservice
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+basePath: "/api/settings"
+
+securityDefinitions:
+  jwt:
+    type: apiKey
+    name: Authorization
+    in: header
+    x-authentication-scheme: Bearer
+    x-bearerInfoFunc: app.decode_token
+
+paths:
+  /create-category:
+    post:
+      tags: [Category]
+      operationId: app.create_category
+      parameters:
+        - $ref: "#/parameters/category_body"
+      responses:
+        200:
+          description: Return status
+        404:
+          description: Not found
+        409:
+          description: Already exists
+
+  /get-category/{category_id}:
+    get:
+      tags: [Category]
+      operationId: app.get_category
+      parameters:
+        - $ref: "#/parameters/category_id"
+      responses:
+        200:
+          description: Return category details
+        404:
+          description: Category not found
+
+  /get-all-categories-by-user/{user_id}:
+    get:
+      tags: [Category]
+      operationId: app.get_all_categories_by_user_id
+      parameters:
+        - $ref: "#/parameters/user_id"
+      responses:
+        200:
+          description: Return all categories for user
+        404:
+          description: Category not found
+
+  /update-category-name:
+    put:
+      tags: [Category]
+      operationId: app.update_category_name
+      parameters:
+        - $ref: "#/parameters/name_body"
+      responses:
+        200:
+          description: Changed name successfully
+        404:
+          description: Category not found
+
+  /delete-category/{category_id}:
+    delete:
+      tags: [Category]
+      operationId: app.delete_category
+      parameters:
+        - $ref: "#/parameters/category_id"
+      responses:
+        204:
+          description: Category successfully deleted
+        404:
+          description: Category not found
+
+  /create-currency:
+    post:
+      tags: [Currency]
+      operationId: app.create_currency
+      parameters:
+        - $ref: "#/parameters/currency_body"
+      responses:
+        200:
+          description: Return status
+        404:
+          description: Not found
+        409:
+          description: Already exists
+
+  /get-currency/{currency_id}:
+    get:
+      tags: [Currency]
+      operationId: app.get_currency
+      parameters:
+        - $ref: "#/parameters/currency_id"
+      responses:
+        200:
+          description: Return currency details
+        404:
+          description: Currency not found
+
+  /get-all-currencies:
+    get:
+      tags: [Currency]
+      operationId: app.get_all_currencies
+      responses:
+        200:
+          description: Returns all currencies
+
+  /update-currency-value:
+    put:
+      tags: [Currency]
+      operationId: app.update_currency_value
+      parameters:
+        - $ref: "#/parameters/value_body"
+      responses:
+        200:
+          description: Changed currency's value successfully
+        404:
+          description: Currency not found
+
+  /delete-currency/{currency_id}:
+    delete:
+      tags: [Currency]
+      operationId: app.delete_currency
+      parameters:
+        - $ref: "#/parameters/currency_id"
+      responses:
+        204:
+          description: Currency successfully deleted
+        404:
+          description: Currency not found
+
+parameters:
+  category_body:
+    name: category_body
+    description: Body of a category create request
+    in: body
+    schema:
+      required:
+        - user_id
+        - name
+        - type
+      properties:
+        user_id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: integer
+
+  user_id:
+    name: user_id
+    description: User unique id
+    in: path
+    type: integer
+    required: true
+
+  category_id:
+    name: category_id
+    description: Category unique id
+    in: path
+    type: integer
+    required: true
+
+  name_body:
+    name: name_body
+    description: Body of a category's name update request
+    in: body
+    schema:
+      required:
+        - category_id
+        - name
+      properties:
+        category_id:
+          type: integer
+        name:
+          type: string
+
+  currency_body:
+    name: currency_body
+    description: Body of a currency create request
+    in: body
+    schema:
+      required:
+        - name
+        - short_name
+        - value_to_eur
+      properties:
+        name:
+          type: string
+        short_name:
+          type: string
+        value_to_eur:
+          type: number
+
+  currency_id:
+    name: currency_id
+    description: Currency unique id
+    in: path
+    type: integer
+    required: true
+
+  value_body:
+    name: value_body
+    description: Body of a currency's value update request
+    in: body
+    schema:
+      required:
+        - currency_id
+        - value
+      properties:
+        currency_id:
+          type: integer
+        value:
+          type: string
