@@ -1,0 +1,151 @@
+swagger: "2.0"
+
+info:
+  title: Statistics Microservice
+  version: "0.1"
+  description: STATISTICS Microservice
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+basePath: "/api/statistics"
+
+securityDefinitions:
+  jwt:
+    type: apiKey
+    name: Authorization
+    in: header
+    x-authentication-scheme: Bearer
+    x-bearerInfoFunc: app.decode_token
+
+paths:
+  /income-daily:
+    get:
+      tags: [Statistics]
+      operationId: app.income_daily
+      parameters:
+        - $ref: "#/parameters/body"
+      responses:
+        200:
+          description: Return daily income data for user
+        404:
+          description: Not found
+
+  /income-weekly:
+    get:
+      tags: [Statistics]
+      operationId: app.income_weekly
+      parameters:
+        - $ref: "#/parameters/body"
+      responses:
+        200:
+          description: Return weekly income data for user
+        404:
+          description: Not found
+
+  /income-monthly:
+    get:
+      tags: [Statistics]
+      operationId: app.income_monthly
+      parameters:
+        - $ref: "#/parameters/body"
+      responses:
+        200:
+          description: Return monthly income data for user
+        404:
+          description: Not found
+
+  /income-annually:
+    get:
+      tags: [Statistics]
+      operationId: app.income_annualy
+      parameters:
+        - $ref: "#/parameters/body"
+      responses:
+        200:
+          description: Return annualy income data for user
+        404:
+          description: Not found
+
+  /income-period:
+    get:
+      tags: [Statistics]
+      operationId: app.income_period
+      parameters:
+        - $ref: "#/parameters/period_body"
+      responses:
+        200:
+          description: Return period income data for user
+        404:
+          description: Not found
+
+  /expense-daily:
+    get:
+      tags: [Statistics]
+      operationId: app.expense_daily
+      parameters:
+        - $ref: "#/parameters/body"
+      responses:
+        200:
+          description: Return daily expense data for user
+        404:
+          description: Not found
+
+  /expense-weekly:
+    get:
+      tags: [Statistics]
+      operationId: app.expense_weekly
+      parameters:
+        - $ref: "#/parameters/body"
+      responses:
+        200:
+          description: Return weekly expense data for user
+        404:
+          description: Not found
+
+  /expense-monthly:
+    get:
+      tags: [Statistics]
+      operationId: app.expense_monthly
+      parameters:
+        - $ref: "#/parameters/body"
+      responses:
+        200:
+          description: Return monthly expense data for user
+        404:
+          description: Not found
+
+  /expense-annually:
+    get:
+      tags: [Statistics]
+      operationId: app.expense_annualy
+      parameters:
+        - $ref: "#/parameters/body"
+      responses:
+        200:
+          description: Return annualy expense data for user
+        404:
+          description: Not found
+
+  /expense-period:
+    get:
+      tags: [Statistics]
+      operationId: app.expense_period
+      parameters:
+        - $ref: "#/parameters/period_body"
+      responses:
+        200:
+          description: Return period expense data for user
+        404:
+          description: Not found
+
+parameters:
+  user_id:
+    name: user_id
+    description: User unique id
+    in: path
+    type: integer
+    required: true

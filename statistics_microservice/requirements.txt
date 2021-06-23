@@ -1,0 +1,7 @@
+Flask==1.1.2
+Flask-Migrate
+connexion[swagger-ui]
+sqlalchemy
+PyJWT
+marshmallow-sqlalchemy
+matplotlib
