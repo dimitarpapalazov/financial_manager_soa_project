@@ -1,6 +1,5 @@
 from app import db
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from ..settings_microservice.models import Currency
 
 
 class User(db.Model):
@@ -17,8 +16,7 @@ class User(db.Model):
     verification_code = db.Column(db.String)
     is_verified = db.Column(db.Boolean)
     date_of_birth = db.Column(db.DateTime)
-    currency_in_use = db.Column(db.Integer, db.ForeignKey('currency.id'))
-    currency = db.relationship('Currency')
+    currency_in_use = db.Column(db.Integer)
 
 
 class UserSchema(SQLAlchemyAutoSchema):

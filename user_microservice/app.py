@@ -29,26 +29,29 @@ TRANSACTIONS_APIKEY = "TRANSACTIONS MS SECRET"
 def has_role(arg):
     def has_role_inner(fn):
         @wraps(fn)
-        def decorated_view(*args, **kwargs):
+        def decode_view(*args, **kwargs):
             try:
                 headers = request.headers
-                if 'AUTHORIZATION' in headers:
-                    token = headers['AUTHORIZATION'].split(' ')[1]
+                if 'Authorization' in headers:
+                    token = headers['Authorization']
                     decoded_token = decode_token(token)
-                    if 'admin' in decoded_token['roles']:
+                    if 'admin' in decoded_token:
                         return fn(*args, **kwargs)
                     for role in arg:
                         if role in decoded_token['roles']:
                             return fn(*args, **kwargs)
-                    abort(401)
+                    abort(404)
                 return fn(*args, **kwargs)
             except Exception as e:
                 abort(401)
-        return decorated_view
+
+        return decode_view
+
     return has_role_inner
 
 
 def decode_token(token):
+    token = token.strip('"')
     return jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
 
 
@@ -60,10 +63,7 @@ def auth(auth_body):
         username=auth_body['username']).first()
     user_id = found_user.id
     roles = []
-    if found_user.is_admin:
-        roles.append("admin")
-    else:
-        roles.append("basic")
+    roles.append(found_user.role)
     payload = {
         "iss": 'User Microservice',
         "iat": int(timestamp),
@@ -107,7 +107,6 @@ def auth_microservice(auth_body_microservice):
     return encoded
 
 
-@has_role(["admin"])
 def send_verification_email(user_id):
     found_user = db.session.query(User).get(user_id)
     if found_user:
@@ -172,7 +171,7 @@ def get_user_details(user_id):
         return 404
 
 
-@has_role(["admin", "basic_user"])
+@has_role(['ADMIN','BASIC'])
 def change_password(password_body):
     found_user = db.session.query(User).get(password_body['user_id'])
     if found_user:
@@ -187,7 +186,7 @@ def change_password(password_body):
         return 404
 
 
-@has_role(["admin", "basic_user"])
+@has_role(["ADMIN", "BASIC"])
 def verify_user(verification_body):
     found_user = db.session.query(User).get(verification_body['user_id'])
     if found_user:
@@ -206,7 +205,7 @@ def get_all_users():
     return user_schema.dump(users, many=True)
 
 
-@has_role(["admin"])
+@has_role(["ADMIN"])
 def delete_user(user_id):
     db.session.query(User).filter_by(id=user_id).delete()
     db.session.commit()
