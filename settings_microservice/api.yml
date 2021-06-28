@@ -224,4 +224,4 @@ parameters:
         currency_id:
           type: integer
         value:
-          type: string
+          type: number

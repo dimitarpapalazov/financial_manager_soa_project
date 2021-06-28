@@ -3,7 +3,6 @@ from flask import request, abort
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 import jwt
-from ..user_microservice.models import User
 
 
 # Authorization configuration
@@ -11,26 +10,29 @@ from ..user_microservice.models import User
 def has_role(arg):
     def has_role_inner(fn):
         @wraps(fn)
-        def decorated_view(*args, **kwargs):
+        def decode_view(*args, **kwargs):
             try:
                 headers = request.headers
-                if 'AUTHORIZATION' in headers:
-                    token = headers['AUTHORIZATION'].split(' ')[1]
+                if 'Authorization' in headers:
+                    token = headers['Authorization']
                     decoded_token = decode_token(token)
-                    if 'admin' in decoded_token['roles']:
+                    if 'admin' in decoded_token:
                         return fn(*args, **kwargs)
                     for role in arg:
                         if role in decoded_token['roles']:
                             return fn(*args, **kwargs)
-                    abort(401)
+                    abort(404)
                 return fn(*args, **kwargs)
             except Exception as e:
                 abort(401)
-        return decorated_view
+
+        return decode_view
+
     return has_role_inner
 
 
 def decode_token(token):
+    token = token.strip('"')
     return jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
 
 
@@ -66,7 +68,7 @@ def get_all_currencies():
 def update_currency_value(value_body):
   found_currency = db.session.query(Currency).get(value_body['currency_id'])
   if found_currency:
-    found_currency.value = value_body['value']
+    found_currency.value_to_eur = value_body['value']
     db.session.commit()
     return currency_schema.dump(found_currency)
   else:
@@ -83,8 +85,6 @@ def exchange_currency(first_currency_id, second_currency_id, user_id):
 
 
 def create_category(category_body):
-  found_user = db.session.query(User).get(category_body['user_id'])
-  if not found_user:
     found_category = db.session.query(Category).filter_by(
         name=category_body['name'], user_id=category_body['user_id']).first()
     if not found_category:
@@ -96,8 +96,6 @@ def create_category(category_body):
       return category_schema.dump(new_category)
     else:
       return 409
-  else:
-    return 404
 
 
 def get_category(category_id):
@@ -109,12 +107,8 @@ def get_category(category_id):
 
 
 def get_all_categories_by_user_id(user_id):
-  found_user = db.session.query(User).get(user_id)
-  if found_user:
     categories = db.session.query(Category).filter_by(user_id=user_id).all()
     return category_schema.dump(categories, many=True)
-  else:
-    return 404
 
 
 def update_category_name(name_body):
