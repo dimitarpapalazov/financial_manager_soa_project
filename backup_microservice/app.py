@@ -1,17 +1,11 @@
-from transactions_microservice.models import Transaction
 import connexion
 from flask import request, abort
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 import jwt
-from user_microservice.models import User
-from user_microservice.app import db as user_db
-from settings_microservice.app import db as categories_db
-from settings_microservice.models import Category
-from accounts_microservice.models import Account
-from accounts_microservice.app import db as accounts_db
-from transactions_microservice.app import db as transactions_db
 import pathlib
+import urllib
+import json
 
 
 # Authorization configuration
@@ -19,79 +13,76 @@ import pathlib
 def has_role(arg):
     def has_role_inner(fn):
         @wraps(fn)
-        def decorated_view(*args, **kwargs):
+        def decode_view(*args, **kwargs):
             try:
                 headers = request.headers
-                if 'AUTHORIZATION' in headers:
-                    token = headers['AUTHORIZATION'].split(' ')[1]
+                if 'Authorization' in headers:
+                    token = headers['Authorization']
                     decoded_token = decode_token(token)
-                    if 'admin' in decoded_token['roles']:
+                    if 'admin' in decoded_token:
                         return fn(*args, **kwargs)
                     for role in arg:
                         if role in decoded_token['roles']:
                             return fn(*args, **kwargs)
-                    abort(401)
+                    abort(404)
                 return fn(*args, **kwargs)
             except Exception as e:
                 abort(401)
-        return decorated_view
+
+        return decode_view
+
     return has_role_inner
 
 
 def decode_token(token):
+    token = token.strip('"')
     return jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
 
 
 # Endpoints
 
-def categories_to_csv(user_id):
-    found_user = user_db.session.query(User).get(user_id)
-    if found_user:
-        categories_csv = ''
-        categories = categories_db.session.query(
-            Category).filter_by(user_id=user_id).all()
-        for category in categories:
-            categories_csv += category.to_csv() + '\n'
-        return categories_csv
-    else:
-        return 404
+def categories(user_id):
+    categories = urllib.request.urlopen(
+        'http://192.168.0.108:5003/api/settings/get-all-categories-by-user/' + str(user_id)).read().decode('utf-8')
+    return categories
+    categories = json.loads(categories)
 
 
-def accounts_to_csv(user_id):
-    found_user = user_db.session.query(User).get(user_id)
-    if found_user:
-        accounts_csv = ''
-        accounts = accounts_db.session.query(
-            Account).filter_by(user_id=user_id).all()
-        for account in accounts:
-            accounts_csv += account.to_csv() + '\n'
-        return accounts_csv
-    else:
-        return 404
+def accounts(user_id):
+    accounts = urllib.request.urlopen(
+        'http://192.168.0.108:5001/api/accounts/get-all-by-user/' + str(user_id)).read().decode('utf-8')
+    return accounts
+    accounts = json.loads(accounts)
 
 
-def transactions_to_csv(user_id):
-    found_user = user_db.session.query(User).get(user_id)
-    if found_user:
-        transactions_csv = ''
-        transactions = transactions_db.session.query(
-            Transaction).filter_by(user_id=user_id).all()
-        for transaction in transactions:
-            transactions_csv += transaction.to_csv() + '\n'
-        return transactions_csv
-    else:
-        return 404
+def transactions(user_id):
+    transactions = urllib.request.urlopen(
+        'http://192.168.0.108:5005/api/transactions/get-all-by-user/' + str(user_id)).read().decode('utf-8')
+    return transactions
+    transactions = json.loads(transactions)
 
 
-def all_to_csv(user_id):
-    f = open('backup.csv', 'w')
-    f.write('Categories:\n')
-    f.write(categories_to_csv(user_id))
-    f.write('Accounts:\n')
-    f.write(accounts_to_csv(user_id))
-    f.write('Transactions:\n')
-    f.write(transactions_to_csv(user_id))
-    return {'backup': pathlib.Path(f).absolute()}
+def all(user_id):
+    f = open('backup.json', 'w')
+    f.write('{\n'+
+    '"data": [\n'
+    '{\n'+
+    '"name": "Categories",\n' +
+    '"data": ')
+    f.write(str(categories(user_id)))
+    f.write('},\n')
+    f.write('{\n'+
+    '"name": "Accounts",\n' +
+    '"data": ')
+    f.write(str(accounts(user_id)))
+    f.write('},\n')
+    f.write('{\n' +
+            '"name": "Transactions",\n' +
+            '"data": ')
+    f.write(str(transactions(user_id)))
+    f.write('}]\n')
+    f.write('}\n')
+    return {'backup': str(pathlib.Path('backup.json').absolute())}
 
 
 # Configuration

@@ -22,10 +22,10 @@ securityDefinitions:
     x-bearerInfoFunc: app.decode_token
 
 paths:
-  /categories:
+  /categories/{user_id}:
     get:
       tags: [Backup]
-      operationId: app.categories_to_csv
+      operationId: app.categories
       parameters:
         - $ref: "#/parameters/user_id"
       responses:
@@ -34,10 +34,10 @@ paths:
         404:
           description: Not found
 
-  /accounts:
+  /accounts/{user_id}:
     get:
       tags: [Backup]
-      operationId: app.accounts_to_csv
+      operationId: app.accounts
       parameters:
         - $ref: "#/parameters/user_id"
       responses:
@@ -46,10 +46,10 @@ paths:
         404:
           description: Not found
 
-  /transactions:
+  /transactions/{user_id}:
     get:
       tags: [Backup]
-      operationId: app.transactions_to_csv
+      operationId: app.transactions
       parameters:
         - $ref: "#/parameters/user_id"
       responses:
@@ -58,15 +58,15 @@ paths:
         404:
           description: Not found
 
-  /backup:
+  /backup/{user_id}:
     get:
       tags: [Backup]
-      operationId: app.all_to_csv
+      operationId: app.all
       parameters:
         - $ref: "#/parameters/user_id"
       responses:
         200:
-          description: Return CSV file location for user
+          description: Return backup file location for user
         404:
           description: Not found
 
