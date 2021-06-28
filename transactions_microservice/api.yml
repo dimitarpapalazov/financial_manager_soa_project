@@ -48,6 +48,18 @@ paths:
         404:
           description: Transaction not found
 
+  /get-all-by-user/{user_id}:
+    get:
+      tags: [Transaction]
+      operationId: app.get_all_by_user
+      parameters:
+        - $ref: "#/parameters/user_id"
+      responses:
+        200:
+          description: Return all transactions for a user
+        404:
+          description: Transaction not found
+
   /get-daily:
     post:
       tags: [Transaction]
@@ -293,3 +305,10 @@ parameters:
           type: integer
         description:
           type: string
+
+  user_id:
+    name: user_id
+    description: Id of the user
+    in: path
+    type: integer
+    required: true

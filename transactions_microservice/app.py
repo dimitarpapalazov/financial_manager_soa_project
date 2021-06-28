@@ -43,7 +43,8 @@ def decode_token(token):
 # Endpoints
 
 def create(transaction_body):
-    new_transaction = Transaction(date=date.today(),
+    date_body = date.fromisoformat(transaction_body['date'])
+    new_transaction = Transaction(date=date_body,
                                   category_id=transaction_body['category_id'],
                                   account_id=transaction_body['account_id'],
                                   amount=transaction_body['amount'],
@@ -78,6 +79,10 @@ def transactions_by_category(get_body, transactions):
         transactions.pop(i)
     return transactions
 
+
+def get_all_by_user(user_id):
+    transactions = db.session.query(Transaction).filter_by(user_id=user_id).all()
+    return transaction_schema.dump(transactions, many=True)
 
 def get_daily(get_body):
     transactions = db.session.query(Transaction).filter(
