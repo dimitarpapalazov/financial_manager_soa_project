@@ -49,7 +49,7 @@ paths:
           description: Transaction not found
 
   /get-daily:
-    get:
+    post:
       tags: [Transaction]
       operationId: app.get_daily
       parameters:
@@ -61,7 +61,7 @@ paths:
           description: Transaction not found
 
   /get-weekly:
-    get:
+    post:
       tags: [Transaction]
       operationId: app.get_weekly
       parameters:
@@ -73,7 +73,7 @@ paths:
           description: Transaction not found
 
   /get-monthly:
-    get:
+    post:
       tags: [Transaction]
       operationId: app.get_monthly
       parameters:
@@ -85,7 +85,7 @@ paths:
           description: Transaction not found
 
   /get-annually:
-    get:
+    post:
       tags: [Transaction]
       operationId: app.get_annually
       parameters:
@@ -97,7 +97,7 @@ paths:
           description: Transaction not found
 
   /get-period:
-    get:
+    post:
       tags: [Transaction]
       operationId: app.get_period
       parameters:
@@ -144,17 +144,17 @@ paths:
         404:
           description: Transaction not found
 
-    /update-description:
-      put:
-        tags: [Transaction]
-        operationId: app.update_description
-        parameters:
-          - $ref: "#/parameters/description_body"
-        responses:
-          200:
-            description: Changed description successfully
-          404:
-            description: Transaction not found
+  /update-description:
+    put:
+      tags: [Transaction]
+      operationId: app.update_description
+      parameters:
+        - $ref: "#/parameters/description_body"
+      responses:
+        200:
+          description: Changed description successfully
+        404:
+          description: Transaction not found
 
   /delete/{tranasction_id}:
     delete:
@@ -169,6 +169,23 @@ paths:
           description: Transaction not found
 
 parameters:
+  get_body:
+    name: get_body
+    description: Body of get request
+    in: body
+    schema:
+      required:
+        - user_id
+        - date
+      properties:
+        user_id:
+          type: integer
+        date:
+          type: string
+        type:
+          type: integer
+          default: -1
+
   transaction_body:
     name: transaction_body
     description: Body of a transaction create request
@@ -201,26 +218,6 @@ parameters:
     type: integer
     required: true
 
-  get_body:
-    name: get_body
-    description: Body of get request
-    in: body
-    schema:
-      required:
-        - user_id
-        - date
-      properties:
-        user_id:
-          type: integer
-        date:
-          type: string
-        type:
-          type: integer
-          default: -1
-        to_JSON:
-          type: boolean
-          default: true
-
   period_body:
     name: period_body
     description: Body of period get request
@@ -240,9 +237,6 @@ parameters:
         type:
           type: integer
           default: -1
-        to_JSON:
-          type: boolean
-          default: true
 
   date_body:
     name: date_body
