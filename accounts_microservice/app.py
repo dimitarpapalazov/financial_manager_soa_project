@@ -3,7 +3,6 @@ from flask import request, abort
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 import jwt
-from ..user_microservice.models import User
 
 
 # Authorization configuration
@@ -11,34 +10,34 @@ from ..user_microservice.models import User
 def has_role(arg):
     def has_role_inner(fn):
         @wraps(fn)
-        def decorated_view(*args, **kwargs):
+        def decode_view(*args, **kwargs):
             try:
                 headers = request.headers
-                if 'AUTHORIZATION' in headers:
-                    token = headers['AUTHORIZATION'].split(' ')[1]
+                if 'Authorization' in headers:
+                    token = headers['Authorization']
                     decoded_token = decode_token(token)
-                    if 'admin' in decoded_token['roles']:
+                    if 'admin' in decoded_token:
                         return fn(*args, **kwargs)
                     for role in arg:
                         if role in decoded_token['roles']:
                             return fn(*args, **kwargs)
-                    abort(401)
+                    abort(404)
                 return fn(*args, **kwargs)
             except Exception as e:
                 abort(401)
-        return decorated_view
+
+        return decode_view
+
     return has_role_inner
 
 
 def decode_token(token):
+    token = token.strip('"')
     return jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
-
 
 # Endpoints
 
 def create(account_body):
-  found_user = db.session.query(User).get(account_body['user_id'])
-  if not found_user:
     found_account = db.session.query(Account).filter_by(name=account_body['name']).first()
     if not found_account:
       new_account = Account(group=account_body['group'],
@@ -50,8 +49,6 @@ def create(account_body):
       return account_schema.dump(new_account)
     else:
       return 409
-  else:
-    return 404
 
     
 def get_account(account_id):
@@ -63,12 +60,8 @@ def get_account(account_id):
 
 
 def get_all_accounts_by_user_id(user_id):
-  found_user = db.session.query(User).get(user_id)
-  if found_user:
     accounts = db.session.query(Account).filter_by(user_id=user_id).all()
     return account_schema.dump(accounts, many=True)
-  else:
-    return 404
 
 
 def change_name(name_body):
