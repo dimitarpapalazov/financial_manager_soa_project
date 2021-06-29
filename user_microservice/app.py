@@ -1,3 +1,4 @@
+from models import User, UserSchema
 from functools import wraps
 import connexion
 from flask import request, abort
@@ -80,20 +81,20 @@ def auth_microservice(auth_body_microservice):
     apikey = auth_body_microservice['apikey']
     roles = []
     if apikey == ACCOUNTS_APIKEY:
-        roles.append("accounts")
-        sub = 'accounts'
+        roles.append("ACCOUNTS")
+        sub = 'ACCOUNTS'
     elif apikey == BACKUP_APIKEY:
-        roles.append("backup")
-        sub = 'backup'
+        roles.append("BACKUP")
+        sub = 'BACKUP'
     elif apikey == SETTINGS_APIKEY:
-        roles.append("settings")
-        sub = 'settings'
+        roles.append("SETTINGS")
+        sub = 'SETTINGS'
     elif apikey == STATISTICS_APIKEY:
-        roles.append("statistics")
-        sub = 'statistics'
+        roles.append("STATISTICS")
+        sub = 'STATISTICS'
     elif apikey == TRANSACTIONS_APIKEY:
-        roles.append("transactions")
-        sub = 'transactions'
+        roles.append("TRANSACTIONS")
+        sub = 'TRANSACTIONS'
 
     timestamp = int(time.time())
     payload = {
@@ -171,7 +172,7 @@ def get_user_details(user_id):
         return 404
 
 
-@has_role(['ADMIN','BASIC'])
+@has_role(['ADMIN', 'BASIC'])
 def change_password(password_body):
     found_user = db.session.query(User).get(password_body['user_id'])
     if found_user:
@@ -230,8 +231,6 @@ app.config['MAIL_PASSWORD'] = 'soauserms123'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
-
-from models import User, UserSchema
 
 
 user_schema = UserSchema(

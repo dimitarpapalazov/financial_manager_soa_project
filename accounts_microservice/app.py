@@ -37,6 +37,7 @@ def decode_token(token):
 
 # Endpoints
 
+
 def create(account_body):
     found_account = db.session.query(Account).filter_by(name=account_body['name']).first()
     if not found_account:
