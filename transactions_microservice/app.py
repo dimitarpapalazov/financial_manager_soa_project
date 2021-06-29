@@ -68,16 +68,18 @@ def transactions_by_category(get_body, transactions):
         'http://192.168.0.108:5003/api/settings/get-all-categories-by-user/' + str(get_body['user_id'])).read().decode('utf-8')
     categories = json.loads(categories)
     categories_ids = []
+    needed_categories = []
     for i in range(len(categories)):
-      if categories[i]['type'] != get_body['type']:
-        categories.pop(i)
-        continue
-      if categories[i]['id'] not in categories_ids:
-        categories_ids.append(categories[i]['id'])
+      if categories[i]['type'] == get_body['type']:
+        needed_categories.append(categories[i])
+    for i in range(len(needed_categories)):
+      if needed_categories[i]['id'] not in categories_ids:
+        categories_ids.append(needed_categories[i]['id'])
+    needed_transactions = []
     for i in range(len(transactions)):
-      if transactions[i].category_id not in categories_ids:
-        transactions.pop(i)
-    return transactions
+      if transactions[i].category_id in categories_ids:
+        needed_transactions.append(transactions[i])
+    return needed_transactions
 
 
 def get_all_by_user(user_id):

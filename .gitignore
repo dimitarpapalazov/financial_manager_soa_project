@@ -2,10 +2,12 @@
 /accounts_microservice/__pycache__
 /backup_microservice/env
 /backup_microservice/__pycache__
+/backup_microservice/backup.json
 /settings_microservice/env
 /settings_microservice/__pycache__
 /statistics_microservice/env
 /statistics_microservice/__pycache__
+/statistics_microservice/pie_chart.png
 /transactions_microservice/env
 /transactions_microservice/__pycache__
 /user_microservice/__pycache__
