@@ -23,7 +23,7 @@ securityDefinitions:
 
 paths:
   /income-daily:
-    get:
+    post:
       tags: [Statistics]
       operationId: app.income_daily
       parameters:
@@ -35,7 +35,7 @@ paths:
           description: Not found
 
   /income-weekly:
-    get:
+    post:
       tags: [Statistics]
       operationId: app.income_weekly
       parameters:
@@ -47,7 +47,7 @@ paths:
           description: Not found
 
   /income-monthly:
-    get:
+    post:
       tags: [Statistics]
       operationId: app.income_monthly
       parameters:
@@ -59,9 +59,9 @@ paths:
           description: Not found
 
   /income-annually:
-    get:
+    post:
       tags: [Statistics]
-      operationId: app.income_annualy
+      operationId: app.income_annually
       parameters:
         - $ref: "#/parameters/body"
       responses:
@@ -71,7 +71,7 @@ paths:
           description: Not found
 
   /income-period:
-    get:
+    post:
       tags: [Statistics]
       operationId: app.income_period
       parameters:
@@ -83,7 +83,7 @@ paths:
           description: Not found
 
   /expense-daily:
-    get:
+    post:
       tags: [Statistics]
       operationId: app.expense_daily
       parameters:
@@ -95,7 +95,7 @@ paths:
           description: Not found
 
   /expense-weekly:
-    get:
+    post:
       tags: [Statistics]
       operationId: app.expense_weekly
       parameters:
@@ -107,7 +107,7 @@ paths:
           description: Not found
 
   /expense-monthly:
-    get:
+    post:
       tags: [Statistics]
       operationId: app.expense_monthly
       parameters:
@@ -119,9 +119,9 @@ paths:
           description: Not found
 
   /expense-annually:
-    get:
+    post:
       tags: [Statistics]
-      operationId: app.expense_annualy
+      operationId: app.expense_annually
       parameters:
         - $ref: "#/parameters/body"
       responses:
@@ -131,7 +131,7 @@ paths:
           description: Not found
 
   /expense-period:
-    get:
+    post:
       tags: [Statistics]
       operationId: app.expense_period
       parameters:
@@ -149,3 +149,40 @@ parameters:
     in: path
     type: integer
     required: true
+
+  body:
+    name: body
+    description: Body of a request
+    in: body
+    schema:
+      required:
+        - user_id
+        - date
+        - type
+      properties:
+        user_id:
+          type: integer
+        date:
+          type: string
+        type:
+          type: integer
+
+  period_body:
+    name: period_body
+    description: Body of a request
+    in: body
+    schema:
+      required:
+        - user_id
+        - start
+        - end
+        - type
+      properties:
+        user_id:
+          type: integer
+        start:
+          type: string
+        end:
+          type: string
+        type:
+          type: integer
