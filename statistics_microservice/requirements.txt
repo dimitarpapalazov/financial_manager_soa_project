@@ -5,3 +5,5 @@ sqlalchemy
 PyJWT
 marshmallow-sqlalchemy
 matplotlib
+netifaces
+python-consul

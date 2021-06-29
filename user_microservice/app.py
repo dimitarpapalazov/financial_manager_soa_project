@@ -1,4 +1,3 @@
-from models import User, UserSchema
 from functools import wraps
 import connexion
 from flask import request, abort
@@ -13,6 +12,10 @@ import secrets
 import string
 import jwt
 import time
+from consul import Consul, Check
+import configparser
+import netifaces
+import socket
 
 
 # Authentication and authorization configuration
@@ -25,6 +28,52 @@ BACKUP_APIKEY = "BACKUP MS SECRET"
 SETTINGS_APIKEY = "SETTINGS MS SECRET"
 STATISTICS_APIKEY = "STATISTICS MS SECRET"
 TRANSACTIONS_APIKEY = "TRANSACTIONS MS SECRET"
+
+CONSUL_PORT = 8500
+SERVICE_NAME = 'user_microservice'
+SERVICE_PORT = 5006
+
+
+def get_host_name_IP():
+
+    host_name_ip = ""
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        host_name_ip = s.getsockname()[0]
+        s.close()
+        # print ("Host ip:", host_name_ip)
+        return host_name_ip
+    except Exception as e:
+        print(e)
+
+
+def register_to_consul():
+    consul = Consul(host="consul", port=CONSUL_PORT)
+
+    agent = consul.agent
+
+    service = agent.service
+
+    ip = get_host_name_IP()
+    
+
+    check = Check.http(f"http://{ip}:{SERVICE_PORT}/api/user/ui",interval="10s", timeout="5s", deregister="1s")
+
+    service.register(name=SERVICE_NAME, service_id=SERVICE_NAME,
+                     address=ip, port=SERVICE_PORT, check=check)
+
+
+def get_consul_service(service_id):
+    consul = Consul(host="consul", port=CONSUL_PORT)
+
+    agent = consul.agent
+
+    service_list = agent.services()
+
+    service_info = service_list[service_id]
+
+    return service_info['Address'], service_info['Port']
 
 
 def has_role(arg):
@@ -231,6 +280,11 @@ app.config['MAIL_PASSWORD'] = 'soauserms123'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
+
+
+register_to_consul()
+
+from models import User, UserSchema
 
 
 user_schema = UserSchema(

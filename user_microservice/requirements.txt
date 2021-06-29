@@ -6,3 +6,5 @@ flask-bcrypt
 Flask-Mail
 PyJWT
 marshmallow-sqlalchemy
+netifaces
+python-consul

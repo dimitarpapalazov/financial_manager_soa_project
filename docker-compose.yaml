@@ -1,0 +1,57 @@
+version: '3.6'
+
+services:
+
+  consul:
+    image: consul
+    container_name: consul
+    ports:
+      - "8500:8500"
+
+  accounts:
+    build:
+      context: ./accounts_microservice
+    volumes:
+      - ./accounts_microservice/app
+    ports:
+      - 5001:5000
+
+  backup:
+    build:
+      context: ./backup_microservice
+    volumes:
+      - ./backup_microservice/app
+    ports:
+      - 5002:5000
+
+  settings:
+    build:
+      context: ./settings_microservice
+    volumes:
+      - ./settings_microservice/app
+    ports:
+      - 5003:5000
+
+  statistics:
+    build:
+      context: ./statistics_microservice
+    volumes:
+      - ./statistics_microservice/app
+    ports:
+      - 5004:5000
+
+  transactions:
+    build:
+      context: ./transactions_microservice
+    volumes:
+      - ./transactions_microservice/app
+    ports:
+      - 5005:5000
+
+  user:
+    build:
+      context: ./user_microservice
+    volumes:
+      - ./user_microservice/app
+    ports:
+      - 5006:5000
